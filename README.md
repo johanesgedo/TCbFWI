@@ -7,7 +7,7 @@ TCbFWI is an experimental framework for Full Waveform Inversion (FWI) that explo
 
 This repository is intended for research and experimental development in GPU-accelerated seismic inversion, numerical wave propagation, Tensor Core computing, and high-performance computational geophysics.
 
-**DOI**: 
+**DOI**: https://doi.org/10.5281/zenodo.21964459
 
 ---
 
@@ -100,7 +100,7 @@ If TCbFWI is used in academic research, please cite the corresponding software r
 
 A citation entry can be added here after the repository is formally released through GitHub and Zenodo.
 
-> **Citation**: 
+> **Citation**: Johanes_Gedo_Sea. (2026). johanesgedo/TCbFWI: TCbFWI v1.0.0 — First Experimental Release (Version v1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.21964459
 
 
 
