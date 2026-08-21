@@ -225,51 +225,6 @@ __device__ __forceinline__ void Velocity_2D_Vertical(
 }
 
 
-__device__ __forceinline__ void Velocity_2D_Vertical(
-    float* __restrict__ pressure,
-    size_t nx,
-    size_t nz,
-    float dz,
-    float* __restrict__ velocity_vertical
-)
-{
-    size_t tx = threadIdx.x;
-    size_t ty = threadIdx.y;
-    size_t ix = blockIdx.x * blockDim.x + tx;
-    size_t iz = blockIdx.y * blockDim.y + ty;
-
-    __shared__ float s_pressure[WMMA_M + 2][WMMA_N];
-
-    if (ix < nx && iz < nz && tx < WMMA_M && ty < WMMA_N) {
-        size_t g_idx = ix + iz * nx;
-        s_pressure[ty + 1][tx] = pressure[g_idx];
-
-        /// Load halo above
-        if (ty == 0 && iz > 0) {
-            s_pressure[0][tx] = pressure[ix + (iz-1) * nx];
-        }
-
-        /// Load halo below
-        if (ty == WMMA_N - 1 && iz < nz - 1) {
-            s_pressure[WMMA_N + 1][tx] = pressure[ix + (iz + 1) * nx];
-        }
-    }
-    __syncthreads();
-
-    if (ix <= 0 || ix >= nx - 1 || iz <= 0 || iz >= nz - 1) return;
-
-    if (tx < WMMA_M && ty < WMMA_N) {
-        float p_top = s_pressure[ty][tx];
-        float p_bottom = s_pressure[ty + 2][tx];
-        float dpdz = (p_bottom - p_top) / (2.0f * dz);
-        float vp = (lambda_coef + 2.0f * mu_coef) / rho_coef;
-        float vz = vp * dpdz;
-        size_t grid_idx = ix + iz * nx;
-        velocity_vertical[grid_idx] = vz;
-    }
-}
-
-
 __device__ __forceinline__ void FFT_2D_From_Velocity_Model(
     float* __restrict__ velocity,
     size_t nx,
